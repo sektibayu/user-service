@@ -1,0 +1,218 @@
+# This is the OpenAPI specification for your service. It is used to generate the client code.
+# To generate the server code, use the Gradle task `openApiGenerate`. The 
+# generated code will be placed in `build/generate-resources/main`.
+#
+# We will evaluate you based on how well you design your API.
+# 1. How well it follows REST principles.
+# 2. How easy it is to understand and use.
+#
+# References
+# 1. https://swagger.io/specification/
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: User Service
+  license:
+    name: MIT
+servers:
+  - url: http://localhost
+paths:
+  /registration:
+    post:
+      summary: endpoint to register user
+      operationId: registration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/RegisterResponse"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /login:
+    post:
+      summary: endpoint to login user
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '403':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /my-profile:
+    get:
+      summary: endpoint to get user information
+      operationId: getMyProfile
+      parameters:
+        - in: header
+          name: x-auth-token
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/ProfileResponse"
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      summary: endpoint to update user profile
+      operationId: updateMyProfile
+      parameters:
+        - in: header
+          name: x-auth-token
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileRequest"
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/ProfileResponse"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    RegisterRequest:
+      type: object
+      required:
+        - phone_number
+        - full_name
+        - password
+      properties:
+        phone_number:
+          type: string
+        full_name:
+          type: string
+        password:
+          type: string
+    RegisterResponse:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+    LoginRequest:
+      type: object
+      required:
+        - phone_number
+        - password
+      properties:
+        phone_number:
+          type: string
+        password:
+          type: string
+    LoginResponse:
+      type: object
+      required:
+        - id
+        - token
+      properties:
+        id:
+          type: string
+        token:
+          type: string
+    ProfileRequest:
+      type: object
+      required:
+        - phone_number
+        - full_name
+      properties:
+        phone_number:
+          type: string
+        full_name:
+          type: string
+    ProfileResponse:
+      type: object
+      required:
+        - full_name
+        - phone_number
+      properties:
+        full_name:
+          type: string
+        phone_number:
+          type: string
+    ErrorResponse:
+      type: object
+      required:
+        - message
+        - errors
+      properties:
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/ErrorField"
+    ErrorField:
+      type: object
+      required:
+        - field
+        - message
+      properties:
+        field:
+          type: string
+        message:
+          type: string
